@@ -1,0 +1,11 @@
+[Unit]
+Description=Ldap2carddav Server
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ldap2carddav
+Restart=once
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

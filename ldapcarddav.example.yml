@@ -1,0 +1,12 @@
+---
+ldap:
+  url: ldaps://ldap.example.com
+  binddn: cn=carddavservice,ou=Services,dc=example,dc=com
+  bindpw: password
+  basedn: ou=People,dc=example,dc=com
+  filter: (objectClass=Person)
+  scrapetime: 6000s
+
+carddav:
+  storagepath: cards
+  port: 8000
