@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
+	"fmt"
 	"strings"
 
 	"github.com/emersion/go-vcard"
@@ -31,7 +33,13 @@ func (cw *CarddavWorker) Start() {
 func createVcardFromLdap(entry *ldap.Entry) *vcard.Card {
 	card := make(vcard.Card)
 	card.SetValue(vcard.FieldName, strings.Join([]string{entry.GetAttributeValue("sn"), entry.GetAttributeValue("givenName")}, ";"))
-	card.SetValue(vcard.FieldEmail, entry.GetAttributeValue("mail"))
+	card.Set(vcard.FieldEmail, &vcard.Field{
+		Value: entry.GetAttributeValue("mail"),
+		Params: vcard.Params{
+			vcard.ParamType: {vcard.TypeWork},
+		},
+	})
+	//card.SetValue(vcard.FieldEmail, entry.GetAttributeValue("mail"))
 	card.Set(vcard.FieldTelephone, &vcard.Field{
 		Value: entry.GetAttributeValue("mobile"),
 		Params: vcard.Params{
@@ -39,6 +47,8 @@ func createVcardFromLdap(entry *ldap.Entry) *vcard.Card {
 		},
 	})
 	card.SetValue(vcard.FieldUID, entry.GetAttributeValue("uid"))
+	card.SetValue(vcard.FieldPhoto, fmt.Sprintf("data:image/jpeg;base64,%s", base64.StdEncoding.EncodeToString([]byte(entry.GetAttributeValue("jpegPhoto")))))
+	card.SetValue(vcard.FieldBirthday, fmt.Sprintf("%s%02s%02s", entry.GetAttributeValue("birthyear"), entry.GetAttributeValue("birthmonth"), entry.GetAttributeValue("birthday")))
 	vcard.ToV4(card)
 	return &card
 }

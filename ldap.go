@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ldapattributes = []string{"uid", "givenname", "sn", "mobile", "mail", "jpegPhoto"}
+	ldapattributes = []string{"uid", "givenname", "sn", "mobile", "mail", "jpegPhoto", "birthday", "birthmonth", "birthyear"}
 )
 
 type LdapWorkerConfig struct {
