@@ -16,7 +16,7 @@ archives:
       - ldap2carddav.example.yml
 
 checksum:
-  name_template: 'checksums.txt'
+  disable: true
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
@@ -31,6 +31,7 @@ nfpms:
     files:
       "ldap2carddav.service": "/etc/systemd/system/ldap2carddav.service"
     maintainer: Heiko Carrasco <heiko.carrasco@yahoo.com> 
+    file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     formats:
       - apk
       - deb
