@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	pathlib "path"
@@ -13,11 +12,12 @@ import (
 
 type CardDAVBackend struct {
 	StorageRoot string
+	Subdirectory string
 }
 
 func (cb CardDAVBackend) AddressBook() (*carddav.AddressBook, error) {
 	return &carddav.AddressBook{
-		Path:            "/",
+		Path:            cb.Subdirectory,
 		Name:            "LDAP Adressbook",
 		Description:     "Adressbook for LDAP Contacts",
 		MaxResourceSize: 100 * 1024,
@@ -27,8 +27,8 @@ func (cb CardDAVBackend) AddressBook() (*carddav.AddressBook, error) {
 func (cb CardDAVBackend) GetAddressObject(path string, req *carddav.AddressDataRequest) (*carddav.AddressObject, error) {
 	dirname, filename := pathlib.Split(path)
 	ext := pathlib.Ext(filename)
-	if dirname != "/" || ext != ".vcf" {
-		return nil, errors.New("Contact not found")
+	if dirname !=  fmt.Sprintf("%s/", cb.Subdirectory) || ext != ".vcf" {
+		return nil, fmt.Errorf("Contact not found: %s%s", dirname, filename)
 	}
 	return cb.getContact(filename)
 }

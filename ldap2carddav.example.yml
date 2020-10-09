@@ -9,4 +9,5 @@ ldap:
 
 carddav:
   storagepath: cards
+  subdirectory: /
   port: 8000

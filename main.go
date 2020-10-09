@@ -15,7 +15,9 @@ func main() {
 	parseConfig()
 
 	// init backend
-	backend := CardDAVBackend{StorageRoot: viper.GetStringMapString("carddav")["storagepath"]}
+	backend := CardDAVBackend{StorageRoot: viper.GetStringMapString("carddav")["storagepath"],
+		Subdirectory: viper.GetStringMapString("carddav")["subdirectory"],
+	}
 
 	// init ldapworker
 	ldapChannel := make(chan []*ldap.Entry, 10)

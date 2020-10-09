@@ -12,7 +12,7 @@ archives:
       386: i386
       amd64: x86_64
     files:
-      - ldap2carddav.service
+      - ldap2carddav@.service
       - ldap2carddav.example.yml
 
 checksum:
@@ -29,7 +29,7 @@ nfpms:
   - config_files:
       "ldap2carddav.example.yml": "/etc/ldap2carddav.yml"
     files:
-      "ldap2carddav.service": "/etc/systemd/system/ldap2carddav.service"
+      "ldap2carddav@.service": "/etc/systemd/system/ldap2carddav.service"
     maintainer: Heiko Carrasco <heiko.carrasco@yahoo.com> 
     file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     formats:

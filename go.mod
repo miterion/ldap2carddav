@@ -10,4 +10,4 @@ require (
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 )
 
-replace github.com/emersion/go-webdav => github.com/miterion/go-webdav v0.3.1-0.20201009123340-d6577b2d9112
+replace github.com/emersion/go-webdav => github.com/miterion/go-webdav v0.3.1-0.20201009153238-ceab85de4dab
