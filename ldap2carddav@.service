@@ -6,6 +6,7 @@ Type=simple
 ExecStart=/usr/local/bin/ldap2carddav
 Restart=once
 RestartSec=5
+User=%i
 
 [Install]
 WantedBy=multi-user.target
