@@ -27,7 +27,7 @@ func (cb CardDAVBackend) AddressBook() (*carddav.AddressBook, error) {
 func (cb CardDAVBackend) GetAddressObject(path string, req *carddav.AddressDataRequest) (*carddav.AddressObject, error) {
 	dirname, filename := pathlib.Split(path)
 	ext := pathlib.Ext(filename)
-	if dirname !=  fmt.Sprintf("%s/", cb.Subdirectory) || ext != ".vcf" {
+	if dirname != cb.Subdirectory || ext != ".vcf" {
 		return nil, fmt.Errorf("Contact not found: %s%s", dirname, filename)
 	}
 	return cb.getContact(filename)
@@ -81,7 +81,7 @@ func (cb CardDAVBackend) getContact(filename string) (*carddav.AddressObject, er
 	}
 
 	return &carddav.AddressObject{
-		Path:    pathlib.Join("/", filename),
+		Path:    filename,
 		ModTime: filestats.ModTime(),
 		ETag:    fmt.Sprintf("%x%x", filestats.ModTime(), filestats.Size()),
 		Card:    card,
