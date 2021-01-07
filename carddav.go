@@ -48,7 +48,9 @@ func createVcardFromLdap(entry *ldap.Entry) *vcard.Card {
 	})
 	card.SetValue(vcard.FieldUID, entry.GetAttributeValue("uid"))
 	card.SetValue(vcard.FieldPhoto, fmt.Sprintf("data:image/jpeg;base64,%s", base64.StdEncoding.EncodeToString([]byte(entry.GetAttributeValue("jpegPhoto")))))
-	card.SetValue(vcard.FieldBirthday, fmt.Sprintf("%s%02s%02s", entry.GetAttributeValue("birthyear"), entry.GetAttributeValue("birthmonth"), entry.GetAttributeValue("birthday")))
+	if entry.GetAttributeValue("birthyear") != "" || entry.GetAttributeValue("birthmonth") != "" || entry.GetAttributeValue("birthday") != "" {
+		card.SetValue(vcard.FieldBirthday, fmt.Sprintf("%s%02s%02s", entry.GetAttributeValue("birthyear"), entry.GetAttributeValue("birthmonth"), entry.GetAttributeValue("birthday")))
+	}
 	vcard.ToV4(card)
 	return &card
 }
