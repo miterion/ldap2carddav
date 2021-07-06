@@ -38,7 +38,14 @@ func (config *LdapWorkerConfig) Start() {
 			continue
 		}
 
-		err = l.Bind(viper.GetStringMapString("ldap")["binddn"], viper.GetStringMapString("ldap")["bindpw"])
+		if pw := viper.GetStringMapString("ldap")["bindpw"]; pw != "" {
+			config.logger.Println("LDAP Password set, using authenticated bind")
+			err = l.Bind(viper.GetStringMapString("ldap")["binddn"], pw)
+		} else {
+			config.logger.Println("LDAP Password empty, using unauthenticated bind.")
+			err = l.UnauthenticatedBind(viper.GetStringMapString("ldap")["binddn"])
+		}
+
 		if err != nil {
 			config.logger.Fatalf("Error binding to LDAP: %s \n", err)
 		}
