@@ -26,11 +26,17 @@ changelog:
       - '^docs:'
       - '^test:'
 nfpms:
-  - config_files:
-      "ldap2carddav.example.yml": "/etc/ldap2carddav.yml"
-    files:
-      "ldap2carddav@.service": "/etc/systemd/system/ldap2carddav.service"
+  -
     maintainer: Heiko Carrasco <heiko.carrasco@yahoo.com> 
+    homepage: https://github.com/miterion/ldap2carddav
+    contents:
+      - src: ldap2carddav@.service
+        dst: /etc/systemd/system/ldap2carddav.service
+      
+      - src: ldap2carddav.example.yml
+        dst: /etc/ldap2carddav.yml
+        type: config
+
     file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     formats:
       - apk
