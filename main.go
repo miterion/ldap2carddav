@@ -32,7 +32,10 @@ func main() {
 		Backend: backend,
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", viper.GetStringMapString("carddav")["port"]), &handler))
+	addr := fmt.Sprintf("%s:%s", viper.GetStringMapString("carddav")["address"], viper.GetStringMapString("carddav")["port"])
+	log.Printf("Starting carddav server on %s", addr)
+
+	log.Fatal(http.ListenAndServe(addr, &handler))
 }
 
 func parseConfig() {

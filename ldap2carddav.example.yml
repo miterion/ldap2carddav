@@ -10,4 +10,5 @@ ldap:
 carddav:
   storagepath: cards
   subdirectory: /
+  address: 127.0.0.1
   port: 8000
