@@ -13,12 +13,29 @@ import (
 type CardDAVBackend struct {
 	StorageRoot string
 	Subdirectory string
+	AddressbookName string
+}
+
+func NewCardDAVBackend(storageroot, subdirectory, addressbookname string) CardDAVBackend {
+	backend := CardDAVBackend{Subdirectory: subdirectory}
+	if storageroot != "" {
+		backend.StorageRoot = storageroot
+	} else {
+		backend.StorageRoot = "/srv/ldapcarddav"
+	}
+	if addressbookname != "" {
+		backend.AddressbookName = addressbookname
+	} else {
+		backend.AddressbookName = "LDAP Adressbook"
+	}
+	
+	return backend
 }
 
 func (cb CardDAVBackend) AddressBook() (*carddav.AddressBook, error) {
 	return &carddav.AddressBook{
 		Path:            cb.Subdirectory,
-		Name:            "LDAP Adressbook",
+		Name:            cb.AddressbookName,
 		Description:     "Adressbook for LDAP Contacts",
 		MaxResourceSize: 100 * 1024,
 	}, nil
