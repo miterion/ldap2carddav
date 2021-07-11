@@ -11,8 +11,8 @@ import (
 )
 
 type CardDAVBackend struct {
-	StorageRoot string
-	Subdirectory string
+	StorageRoot     string
+	Subdirectory    string
 	AddressbookName string
 }
 
@@ -28,7 +28,7 @@ func NewCardDAVBackend(storageroot, subdirectory, addressbookname string) CardDA
 	} else {
 		backend.AddressbookName = "LDAP Adressbook"
 	}
-	
+
 	return backend
 }
 
@@ -114,4 +114,15 @@ func (cb CardDAVBackend) SaveContact(name string, card *vcard.Card) error {
 
 	enc := vcard.NewEncoder(dest)
 	return enc.Encode(*card)
+}
+
+func (cb CardDAVBackend) ClearAddressbook() error {
+	cards, err := filepath.Glob(pathlib.Join(cb.StorageRoot, "*.vcf"))
+	if err != nil {
+		return err
+	}
+	for _, card := range cards {
+		os.Remove(card)
+	}
+	return nil
 }

@@ -25,7 +25,7 @@ func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
 	if err != nil {
 		log.Fatalf("Scrapetime is in an invalid format: %s", err)
 	}
-	return &LdapWorkerConfig{duration, channel, log.New(log.Writer(), "[LDAPWorker] ", log.Ldate|log.Ltime)}
+	return &LdapWorkerConfig{duration, channel, log.New(log.Writer(), "[LDAPWorker]	", log.Ldate|log.Ltime)}
 }
 
 func (config *LdapWorkerConfig) Start() {

@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/emersion/go-vcard"
 	"github.com/go-ldap/ldap"
+	"github.com/spf13/viper"
 )
 
 type CarddavWorker struct {
@@ -22,7 +24,17 @@ func NewCarddavWorker(ch chan []*ldap.Entry, backend *CardDAVBackend) *CarddavWo
 }
 
 func (cw *CarddavWorker) Start() {
+	logger := log.New(log.Writer(), "[CarddavWorker]	", log.Ldate|log.Ltime)
 	for updates := range cw.channel {
+		if viper.GetBool("carddav.clear_old_entries") {
+			// clearing all vcfs before updating
+			logger.Println("Deleting all vcards before sync")
+			err := cw.backend.ClearAddressbook()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		logger.Printf("Creating %d new vcard files\n", len(updates))
 		for _, update := range updates {
 			vcard := createVcardFromLdap(update)
 			cw.backend.SaveContact(update.GetAttributeValue("uid"), vcard)

@@ -9,6 +9,7 @@ ldap:
 
 carddav:
   storagepath: cards
+  clear_old_entries: true
   subdirectory: /
   address: 127.0.0.1
   addressbook_name: LDAP Addressbook
