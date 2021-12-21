@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	ldapattributes = []string{
-		"uid",
+	ldapAttributes = []string{
+		viper.GetString("ldap.unique_id_field"),
 		"givenname",
 		"sn",
-		"mobile",
+		viper.GetString("ldap.phone_field"),
 		"mail",
-		"jpegPhoto",
+		viper.GetString("ldap.avatar_field"),
 		"birthday", "birthmonth", "birthyear",
 	}
 )
@@ -58,7 +58,7 @@ func (config *LdapWorkerConfig) Start() {
 			config.logger.Fatalf("Error binding to LDAP: %s \n", err)
 		}
 
-		sr := ldap.NewSearchRequest(viper.GetString("ldap.basedn"), ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false, viper.GetString("ldap.filter"), ldapattributes, nil)
+		sr := ldap.NewSearchRequest(viper.GetString("ldap.basedn"), ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false, viper.GetString("ldap.filter"), ldapAttributes, nil)
 
 		res, err := l.Search(sr)
 		if err != nil {

@@ -4,12 +4,15 @@ ldap:
   binddn: cn=carddavservice,ou=Services,dc=example,dc=com
   bindpw: password
   basedn: ou=People,dc=example,dc=com
+  unique_id_field: uid
+  phone_field: mobile
+  avatar_field: jpegPhoto
   filter: (objectClass=Person)
   scrapetime: 6000s
 
 carddav:
-  storage_path: cards
-  subdirectory: /
+  storage_path: /srv/ldap2carddav
+  subdirectory: cards
   address_book_name: LDAP address book
   clear_old_entries: true
   address: 127.0.0.1

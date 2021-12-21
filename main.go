@@ -51,8 +51,11 @@ func setDefaultConfig() {
 		"port":              "8000",
 	})
 	viper.SetDefault("ldap", map[string]string{
-		"filter":      "(objectClass=Person)",
-		"scrape_time": "6000s",
+		"unique_id_field": "uid",
+		"phone_field":     "mobile",
+		"avatar_field":    "jpegPhoto",
+		"filter":          "(objectClass=Person)",
+		"scrape_time":     "6000s",
 	})
 }
 

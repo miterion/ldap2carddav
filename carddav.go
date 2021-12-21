@@ -37,7 +37,7 @@ func (cw *CardDAVWorker) Start() {
 		logger.Printf("Creating %d new vCard files...\n", len(updates))
 		for _, update := range updates {
 			vCard := createVCardFromLdap(update)
-			cw.backend.SaveContact(update.GetAttributeValue("uid"), vCard)
+			cw.backend.SaveContact(update.GetAttributeValue(viper.GetString("ldap.unique_id_field")), vCard)
 		}
 	}
 }
@@ -52,13 +52,13 @@ func createVCardFromLdap(entry *ldap.Entry) *vcard.Card {
 		},
 	})
 	card.Set(vcard.FieldTelephone, &vcard.Field{
-		Value: entry.GetAttributeValue("mobile"),
+		Value: entry.GetAttributeValue(viper.GetString("ldap.phone_field")),
 		Params: vcard.Params{
 			vcard.ParamType: {vcard.TypeCell},
 		},
 	})
-	card.SetValue(vcard.FieldUID, entry.GetAttributeValue("uid"))
-	card.SetValue(vcard.FieldPhoto, fmt.Sprintf("data:image/jpeg;base64,%s", base64.StdEncoding.EncodeToString([]byte(entry.GetAttributeValue("jpegPhoto")))))
+	card.SetValue(vcard.FieldUID, entry.GetAttributeValue(viper.GetString("ldap.unique_id_field")))
+	card.SetValue(vcard.FieldPhoto, fmt.Sprintf("data:image/jpeg;base64,%s", base64.StdEncoding.EncodeToString([]byte(entry.GetAttributeValue(viper.GetString("ldap.avatar_field"))))))
 	if entry.GetAttributeValue("birthyear") != "" || entry.GetAttributeValue("birthmonth") != "" || entry.GetAttributeValue("birthday") != "" {
 		card.SetValue(vcard.FieldBirthday, fmt.Sprintf("%s%02s%02s", entry.GetAttributeValue("birthyear"), entry.GetAttributeValue("birthmonth"), entry.GetAttributeValue("birthday")))
 	}
