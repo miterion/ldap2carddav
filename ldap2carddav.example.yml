@@ -8,9 +8,9 @@ ldap:
   scrapetime: 6000s
 
 carddav:
-  storagepath: cards
-  clear_old_entries: true
+  storage_path: cards
   subdirectory: /
+  address_book_name: LDAP address book
+  clear_old_entries: true
   address: 127.0.0.1
-  addressbook_name: LDAP address book
   port: 8000

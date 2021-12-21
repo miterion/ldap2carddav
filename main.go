@@ -12,12 +12,15 @@ import (
 )
 
 func main() {
+	setDefaultConfig()
 	parseConfig()
 
 	// init backend
-	backend := NewCardDAVBackend(viper.GetStringMapString("carddav")["storagepath"],
-		viper.GetStringMapString("carddav")["subdirectory"],
-		viper.GetStringMapString("carddav")["addressbook_name"])
+	backend := NewCardDAVBackend(
+		viper.GetString("carddav.storage_path"),
+		viper.GetString("carddav.subdirectory"),
+		viper.GetString("carddav.address_book_name"),
+	)
 
 	// init LDAP worker
 	ldapChannel := make(chan []*ldap.Entry, 10)
@@ -32,10 +35,25 @@ func main() {
 		Backend: backend,
 	}
 
-	addr := fmt.Sprintf("%s:%s", viper.GetStringMapString("carddav")["address"], viper.GetStringMapString("carddav")["port"])
+	addr := fmt.Sprintf("%s:%s", viper.GetString("carddav.address"), viper.GetString("carddav.port"))
 	log.Printf("Starting carddav server on %s", addr)
 
 	log.Fatal(http.ListenAndServe(addr, &handler))
+}
+
+func setDefaultConfig() {
+	viper.SetDefault("carddav.clear_old_entries", true)
+	viper.SetDefault("carddav", map[string]string{
+		"storage_path":      "/srv/ldap2carddav",
+		"subdirectory":      "cards",
+		"address_book_name": "LDAP address book",
+		"address":           "127.0.0.1",
+		"port":              "8000",
+	})
+	viper.SetDefault("ldap", map[string]string{
+		"filter":      "(objectClass=Person)",
+		"scrape_time": "6000s",
+	})
 }
 
 func parseConfig() {

@@ -17,18 +17,11 @@ type CardDAVBackend struct {
 }
 
 func NewCardDAVBackend(storageRoot, subdirectory, addressBookName string) CardDAVBackend {
-	backend := CardDAVBackend{Subdirectory: subdirectory}
-	if storageRoot != "" {
-		backend.StorageRoot = storageRoot
-	} else {
-		backend.StorageRoot = "/srv/ldapcarddav"
+	return CardDAVBackend{
+		StorageRoot:     storageRoot,
+		Subdirectory:    subdirectory,
+		AddressBookName: addressBookName,
 	}
-	if addressBookName != "" {
-		backend.AddressBookName = addressBookName
-	} else {
-		backend.AddressBookName = "LDAP address book"
-	}
-	return backend
 }
 
 func (cb CardDAVBackend) AddressBook() (*carddav.AddressBook, error) {

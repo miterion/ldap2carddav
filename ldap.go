@@ -9,7 +9,15 @@ import (
 )
 
 var (
-	ldapattributes = []string{"uid", "givenname", "sn", "mobile", "mail", "jpegPhoto", "birthday", "birthmonth", "birthyear"}
+	ldapattributes = []string{
+		"uid",
+		"givenname",
+		"sn",
+		"mobile",
+		"mail",
+		"jpegPhoto",
+		"birthday", "birthmonth", "birthyear",
+	}
 )
 
 type LdapWorkerConfig struct {
@@ -20,7 +28,7 @@ type LdapWorkerConfig struct {
 
 // NewLdapWorker creates a new LdapWorker instance
 func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
-	duration, err := time.ParseDuration(viper.GetStringMapString("ldap")["scrapetime"])
+	duration, err := time.ParseDuration(viper.GetString("ldap.scrapetime"))
 	if err != nil {
 		log.Fatalf("Scrapetime is in an invalid format: %s", err)
 	}
@@ -30,26 +38,27 @@ func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
 func (config *LdapWorkerConfig) Start() {
 	for {
 		config.logger.Println("Starting scrape...")
-		l, err := ldap.DialURL(viper.GetStringMapString("ldap")["url"])
+		l, err := ldap.DialURL(viper.GetString("ldap.url"))
 		if err != nil {
 			config.logger.Printf("Could not connect to LDAP in this cycle: %s \n", err)
 			time.Sleep(config.scrapeTime)
 			continue
 		}
 
-		if pw := viper.GetStringMapString("ldap")["bindpw"]; pw != "" {
+		bindDn := viper.GetString("ldap.binddn")
+		if pw := viper.GetString("ldap.bindpw"); pw != "" {
 			config.logger.Println("LDAP password set, using authenticated bind.")
-			err = l.Bind(viper.GetStringMapString("ldap")["binddn"], pw)
+			err = l.Bind(bindDn, pw)
 		} else {
 			config.logger.Println("LDAP password empty, using unauthenticated bind.")
-			err = l.UnauthenticatedBind(viper.GetStringMapString("ldap")["binddn"])
+			err = l.UnauthenticatedBind(bindDn)
 		}
 
 		if err != nil {
 			config.logger.Fatalf("Error binding to LDAP: %s \n", err)
 		}
 
-		sr := ldap.NewSearchRequest(viper.GetStringMapString("ldap")["basedn"], ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false, viper.GetStringMapString("ldap")["filter"], ldapattributes, nil)
+		sr := ldap.NewSearchRequest(viper.GetString("ldap.basedn"), ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false, viper.GetString("ldap.filter"), ldapattributes, nil)
 
 		res, err := l.Search(sr)
 		if err != nil {
