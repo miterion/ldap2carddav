@@ -11,38 +11,38 @@ import (
 	"github.com/spf13/viper"
 )
 
-type CarddavWorker struct {
+type CardDAVWorker struct {
 	channel chan []*ldap.Entry
 	backend *CardDAVBackend
 }
 
-func NewCarddavWorker(ch chan []*ldap.Entry, backend *CardDAVBackend) *CarddavWorker {
-	return &CarddavWorker{
+func NewCardDAVWorker(ch chan []*ldap.Entry, backend *CardDAVBackend) *CardDAVWorker {
+	return &CardDAVWorker{
 		channel: ch,
 		backend: backend,
 	}
 }
 
-func (cw *CarddavWorker) Start() {
-	logger := log.New(log.Writer(), "[CarddavWorker]	", log.Ldate|log.Ltime)
+func (cw *CardDAVWorker) Start() {
+	logger := log.New(log.Writer(), "[CardDAVWorker]	", log.Ldate|log.Ltime)
 	for updates := range cw.channel {
 		if viper.GetBool("carddav.clear_old_entries") {
 			// clearing all vcfs before updating
-			logger.Println("Deleting all vcards before sync")
-			err := cw.backend.ClearAddressbook()
+			logger.Println("Deleting all vCards before sync...")
+			err := cw.backend.ClearAddressBook()
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
-		logger.Printf("Creating %d new vcard files\n", len(updates))
+		logger.Printf("Creating %d new vCard files...\n", len(updates))
 		for _, update := range updates {
-			vcard := createVcardFromLdap(update)
-			cw.backend.SaveContact(update.GetAttributeValue("uid"), vcard)
+			vCard := createVCardFromLdap(update)
+			cw.backend.SaveContact(update.GetAttributeValue("uid"), vCard)
 		}
 	}
 }
 
-func createVcardFromLdap(entry *ldap.Entry) *vcard.Card {
+func createVCardFromLdap(entry *ldap.Entry) *vcard.Card {
 	card := make(vcard.Card)
 	card.SetValue(vcard.FieldName, strings.Join([]string{entry.GetAttributeValue("sn"), entry.GetAttributeValue("givenName")}, ";"))
 	card.Set(vcard.FieldEmail, &vcard.Field{
@@ -51,7 +51,6 @@ func createVcardFromLdap(entry *ldap.Entry) *vcard.Card {
 			vcard.ParamType: {vcard.TypeWork},
 		},
 	})
-	//card.SetValue(vcard.FieldEmail, entry.GetAttributeValue("mail"))
 	card.Set(vcard.FieldTelephone, &vcard.Field{
 		Value: entry.GetAttributeValue("mobile"),
 		Params: vcard.Params{

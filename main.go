@@ -1,4 +1,4 @@
-// A carddav server which use LDAP as a backend
+// A CardDAV server which uses LDAP as backend
 package main
 
 import (
@@ -19,13 +19,13 @@ func main() {
 		viper.GetStringMapString("carddav")["subdirectory"],
 		viper.GetStringMapString("carddav")["addressbook_name"])
 
-	// init ldapworker
+	// init LDAP worker
 	ldapChannel := make(chan []*ldap.Entry, 10)
 	ldapWorker := NewLdapWorker(ldapChannel)
 	go ldapWorker.Start()
 
-	// init carddavworker
-	carddavWorker := NewCarddavWorker(ldapChannel, &backend)
+	// init CardDAV worker
+	carddavWorker := NewCardDAVWorker(ldapChannel, &backend)
 	go carddavWorker.Start()
 
 	handler := carddav.Handler{

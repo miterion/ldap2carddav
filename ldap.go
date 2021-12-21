@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/go-ldap/ldap"
-
 	"github.com/spf13/viper"
 )
 
@@ -14,12 +13,12 @@ var (
 )
 
 type LdapWorkerConfig struct {
-	scrapetime time.Duration
+	scrapeTime time.Duration
 	channel    chan []*ldap.Entry
 	logger     *log.Logger
 }
 
-// NewLdapWorker creates a new LDAPWorker instance
+// NewLdapWorker creates a new LdapWorker instance
 func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
 	duration, err := time.ParseDuration(viper.GetStringMapString("ldap")["scrapetime"])
 	if err != nil {
@@ -30,19 +29,19 @@ func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
 
 func (config *LdapWorkerConfig) Start() {
 	for {
-		config.logger.Println("Starting scrape")
+		config.logger.Println("Starting scrape...")
 		l, err := ldap.DialURL(viper.GetStringMapString("ldap")["url"])
 		if err != nil {
 			config.logger.Printf("Could not connect to LDAP in this cycle: %s \n", err)
-			time.Sleep(config.scrapetime)
+			time.Sleep(config.scrapeTime)
 			continue
 		}
 
 		if pw := viper.GetStringMapString("ldap")["bindpw"]; pw != "" {
-			config.logger.Println("LDAP Password set, using authenticated bind")
+			config.logger.Println("LDAP password set, using authenticated bind.")
 			err = l.Bind(viper.GetStringMapString("ldap")["binddn"], pw)
 		} else {
-			config.logger.Println("LDAP Password empty, using unauthenticated bind.")
+			config.logger.Println("LDAP password empty, using unauthenticated bind.")
 			err = l.UnauthenticatedBind(viper.GetStringMapString("ldap")["binddn"])
 		}
 
@@ -54,12 +53,12 @@ func (config *LdapWorkerConfig) Start() {
 
 		res, err := l.Search(sr)
 		if err != nil {
-			config.logger.Printf("LDAP Search failed: %s \n", err)
+			config.logger.Printf("LDAP search failed: %s \n", err)
 		}
-		config.logger.Printf("Found %d users\n", len(res.Entries))
+		config.logger.Printf("Found %d users.\n", len(res.Entries))
 		config.channel <- res.Entries
 
 		l.Close()
-		time.Sleep(config.scrapetime)
+		time.Sleep(config.scrapeTime)
 	}
 }

@@ -12,5 +12,5 @@ carddav:
   clear_old_entries: true
   subdirectory: /
   address: 127.0.0.1
-  addressbook_name: LDAP Addressbook
+  addressbook_name: LDAP address book
   port: 8000

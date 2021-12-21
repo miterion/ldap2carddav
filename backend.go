@@ -13,30 +13,29 @@ import (
 type CardDAVBackend struct {
 	StorageRoot     string
 	Subdirectory    string
-	AddressbookName string
+	AddressBookName string
 }
 
-func NewCardDAVBackend(storageroot, subdirectory, addressbookname string) CardDAVBackend {
+func NewCardDAVBackend(storageRoot, subdirectory, addressBookName string) CardDAVBackend {
 	backend := CardDAVBackend{Subdirectory: subdirectory}
-	if storageroot != "" {
-		backend.StorageRoot = storageroot
+	if storageRoot != "" {
+		backend.StorageRoot = storageRoot
 	} else {
 		backend.StorageRoot = "/srv/ldapcarddav"
 	}
-	if addressbookname != "" {
-		backend.AddressbookName = addressbookname
+	if addressBookName != "" {
+		backend.AddressBookName = addressBookName
 	} else {
-		backend.AddressbookName = "LDAP Adressbook"
+		backend.AddressBookName = "LDAP address book"
 	}
-
 	return backend
 }
 
 func (cb CardDAVBackend) AddressBook() (*carddav.AddressBook, error) {
 	return &carddav.AddressBook{
 		Path:            cb.Subdirectory,
-		Name:            cb.AddressbookName,
-		Description:     "Adressbook for LDAP Contacts",
+		Name:            cb.AddressBookName,
+		Description:     "Address book for LDAP contacts",
 		MaxResourceSize: 100 * 1024,
 	}, nil
 }
@@ -51,13 +50,13 @@ func (cb CardDAVBackend) GetAddressObject(path string, req *carddav.AddressDataR
 }
 
 func (cb CardDAVBackend) ListAddressObjects(req *carddav.AddressDataRequest) ([]carddav.AddressObject, error) {
-	vcards, err := filepath.Glob(pathlib.Join(cb.StorageRoot, "*.vcf"))
+	vCards, err := filepath.Glob(pathlib.Join(cb.StorageRoot, "*.vcf"))
 	if err != nil {
 		return nil, err
 	}
 	contacts := []carddav.AddressObject{}
-	for _, cardpath := range vcards {
-		_, card := pathlib.Split(cardpath)
+	for _, cardPath := range vCards {
+		_, card := pathlib.Split(cardPath)
 		contact, err := cb.getContact(card)
 		if err != nil {
 			return nil, err
@@ -92,15 +91,15 @@ func (cb CardDAVBackend) getContact(filename string) (*carddav.AddressObject, er
 		return nil, err
 	}
 
-	filestats, err := f.Stat()
+	fileStats, err := f.Stat()
 	if err != nil {
 		return nil, err
 	}
 
 	return &carddav.AddressObject{
 		Path:    filename,
-		ModTime: filestats.ModTime(),
-		ETag:    fmt.Sprintf("%x%x", filestats.ModTime(), filestats.Size()),
+		ModTime: fileStats.ModTime(),
+		ETag:    fmt.Sprintf("%x%x", fileStats.ModTime(), fileStats.Size()),
 		Card:    card,
 	}, nil
 }
@@ -116,7 +115,7 @@ func (cb CardDAVBackend) SaveContact(name string, card *vcard.Card) error {
 	return enc.Encode(*card)
 }
 
-func (cb CardDAVBackend) ClearAddressbook() error {
+func (cb CardDAVBackend) ClearAddressBook() error {
 	cards, err := filepath.Glob(pathlib.Join(cb.StorageRoot, "*.vcf"))
 	if err != nil {
 		return err
