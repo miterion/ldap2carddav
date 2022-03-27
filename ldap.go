@@ -8,18 +8,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	ldapAttributes = []string{
-		viper.GetString("ldap.unique_id_field"),
-		"givenname",
-		"sn",
-		viper.GetString("ldap.phone_field"),
-		"mail",
-		viper.GetString("ldap.avatar_field"),
-		"birthday", "birthmonth", "birthyear",
-	}
-)
-
 type LdapWorkerConfig struct {
 	scrapeTime time.Duration
 	channel    chan []*ldap.Entry
@@ -28,10 +16,7 @@ type LdapWorkerConfig struct {
 
 // NewLdapWorker creates a new LdapWorker instance
 func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
-	duration, err := time.ParseDuration(viper.GetString("ldap.scrape_time"))
-	if err != nil {
-		log.Fatalf("Scrapetime is in an invalid format: %s", err)
-	}
+	duration := viper.GetDuration("ldap.scrape_time")
 	return &LdapWorkerConfig{duration, channel, log.New(log.Writer(), "[LDAPWorker]	", log.Ldate|log.Ltime)}
 }
 
@@ -56,6 +41,16 @@ func (config *LdapWorkerConfig) Start() {
 
 		if err != nil {
 			config.logger.Fatalf("Error binding to LDAP: %s \n", err)
+		}
+
+		var ldapAttributes = []string{
+			viper.GetString("ldap.unique_id_field"),
+			"givenname",
+			"sn",
+			viper.GetString("ldap.phone_field"),
+			"mail",
+			viper.GetString("ldap.avatar_field"),
+			"birthday", "birthmonth", "birthyear",
 		}
 
 		sr := ldap.NewSearchRequest(viper.GetString("ldap.basedn"), ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false, viper.GetString("ldap.filter"), ldapAttributes, nil)
