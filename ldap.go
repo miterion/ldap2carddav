@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/go-ldap/ldap"
+	"github.com/go-ldap/ldap/v3"
 	"github.com/spf13/viper"
 )
 
