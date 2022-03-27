@@ -28,7 +28,7 @@ type LdapWorkerConfig struct {
 
 // NewLdapWorker creates a new LdapWorker instance
 func NewLdapWorker(channel chan []*ldap.Entry) *LdapWorkerConfig {
-	duration, err := time.ParseDuration(viper.GetString("ldap.scrapetime"))
+	duration, err := time.ParseDuration(viper.GetString("ldap.scrape_time"))
 	if err != nil {
 		log.Fatalf("Scrapetime is in an invalid format: %s", err)
 	}

@@ -42,15 +42,15 @@ func main() {
 }
 
 func setDefaultConfig() {
-	viper.SetDefault("carddav.clear_old_entries", true)
-	viper.SetDefault("carddav", map[string]string{
+	viper.SetDefault("carddav", map[string]interface{}{
 		"storage_path":      "/srv/ldap2carddav",
 		"subdirectory":      "cards",
 		"address_book_name": "LDAP address book",
 		"address":           "127.0.0.1",
 		"port":              "8000",
+		"clear_old_entries": true,
 	})
-	viper.SetDefault("ldap", map[string]string{
+	viper.SetDefault("ldap", map[string]interface{}{
 		"unique_id_field": "uid",
 		"phone_field":     "mobile",
 		"avatar_field":    "jpegPhoto",
