@@ -62,6 +62,5 @@ func createVCardFromLdap(entry *ldap.Entry) *vcard.Card {
 	if entry.GetAttributeValue("birthyear") != "" || entry.GetAttributeValue("birthmonth") != "" || entry.GetAttributeValue("birthday") != "" {
 		card.SetValue(vcard.FieldBirthday, fmt.Sprintf("%s%02s%02s", entry.GetAttributeValue("birthyear"), entry.GetAttributeValue("birthmonth"), entry.GetAttributeValue("birthday")))
 	}
-	vcard.ToV4(card)
 	return &card
 }
