@@ -1,6 +1,6 @@
 module github.com/miterion/ldap2carddav
 
-go 1.20
+go 1.24
 
 require (
 	github.com/emersion/go-vcard v0.0.0-20210521075357-3445b9171995
